@@ -20,6 +20,10 @@ ul, li {
   padding: 0;
   list-style: none;
 }
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
 p {
   font-size: 14px;
 }

@@ -1,135 +1,38 @@
 <template>
   <div class="area">
     <ul :class="['circles', { init, hangup }]">
-      <li animation-time="25"></li>
-      <li animation-time="14"></li>
-      <li animation-time="29"></li>
-      <li animation-time="18"></li>
-      <li animation-time="26"></li>
-      <li animation-time="28"></li>
-      <li animation-time="32"></li>
-      <li animation-time="60"></li>
-      <li animation-time="37"></li>
-      <li animation-time="11"></li>
-      <li animation-time="22"></li>
-      <li animation-time="33"></li>
-      <li animation-time="44"></li>
+      <li v-for="i in 13" :key="i"></li>
     </ul>
   </div>
 </template>
-<script>
-import { Random, getStyle } from './help'
 
-export default {
-  name: 'circles',
+<script setup lang="ts">
+import { Random } from './help'
 
-  setup() {
-    const all = [25, 14, 29, 18, 26, 28, 32, 60, 37, 11, 22, 33, 44]
-    const init = ref(false)
-    const hangup = ref(false)
-    let allToHash = {}
-    onMounted(async () => {
-      await nextTick()
-      allToHash = all.reduce((result, cur) => {
-        const $el = document.querySelector(`li[animation-time='${cur}']`)
-        document.querySelector(':root').style.setProperty(`--cicle-${cur}-width`, `${getStyle($el, 'width')}`)
-        document.querySelector(':root').style.setProperty(`--cicle-${cur}-height`, `${getStyle($el, 'height')}`)
-        document.querySelector(':root').style.setProperty(`--cicle-${cur}-left`, `${getStyle($el, 'left')}`)
+defineOptions({ name: 'Circles' })
 
-        $el.setAttribute('style',
-        `
-          width: var(--cicle-${cur}-width);
-          height: var(--cicle-${cur}-height);
-          left: var(--cicle-${cur}-left)
-        `)
+const init = ref(false)
+const hangup = ref(false)
 
-        result[cur] = {
-          baseNum: cur,
-          value: cur,
-          fn: function(dom = $el, baseNum = cur) {
-            // 生成随机数
-            dom.classList.add('stop')
-            const wh = Random(15, 150)
-            const left = Random(5, 95)
-            document.querySelector(':root').style.setProperty(`--cicle-${baseNum}-width`, `${wh}px`)
-            document.querySelector(':root').style.setProperty(`--cicle-${baseNum}-height`, `${wh}px`)
-            document.querySelector(':root').style.setProperty(`--cicle-${baseNum}-left`, `${left}%`)
-            
-            setTimeout(() => {
-              dom.classList.remove('stop')
-            }, 0)
-          }
-        }
-        return result
-      }, {})
-      init.value = true
-
-      // document.addEventListener('visibilitychange', () => {
-      //   if (document.hidden === true) {
-      //     // 页面被挂起
-      //     hangup.value = true
-      //   } else {
-      //     // 页面被激活
-      //     hangup.value = false
-      //   }
-      // })
-
+onMounted(() => {
+  document.querySelectorAll<HTMLElement>('.circles li').forEach((li) => {
+    // 每轮动画迭代结束时触发，此时方块恰好在透明度 0 的不可见位置，
+    // 在此处重排尺寸与位置不会有视觉跳变，也无需定时器去对齐动画时钟
+    li.addEventListener('animationiteration', () => {
+      const wh = Random(150, 15)
+      li.style.width = `${wh}px`
+      li.style.height = `${wh}px`
+      li.style.left = `${Random(95, 5)}%`
     })
-    let sec = 0
-    
-    // 不用 setTimeout 是因为浏览器切屏时 setTimeout 是不执行的，而 css 动画和 setInterval 是可以后台执行
-    setInterval(() => {
-      sec++
-      if (allToHash[sec]) {
-        const { baseNum, value, fn } = allToHash[sec]
-        if (Array.isArray(baseNum)) {
-          baseNum.forEach((item, index) => {
-            setNewHash(item, value, fn[index])
-          })
-        } else {
-          setNewHash(baseNum, value, fn)
-        }
-        
-        if (Array.isArray(fn)) {
-          fn.forEach((item, index) => {
-            allToHash[sec].fn[index]()
-          })
-        } else {
-          allToHash[sec].fn()
-        }
-        delete allToHash[sec]
-      }
-    }, 1000)
-    
-    function setNewHash(baseNum, value, fn) {
-      let newValue = baseNum + value
-      // 存在公约数时
-      if (allToHash[newValue]) {
-        const _baseNum = allToHash[newValue]['baseNum']
-        const _fn = allToHash[newValue]['fn']
+  })
+  init.value = true
 
-        allToHash[newValue] = {
-          baseNum: Array.isArray(_baseNum) ? [..._baseNum, baseNum] : [_baseNum, baseNum],
-          value: newValue,
-          fn: Array.isArray(_fn) ? [..._fn, fn] : [_fn, fn],
-        }
-      } else {
-
-        allToHash[newValue] = {
-          baseNum,
-          value: newValue,
-          fn
-        }
-      }
-    }
-
-    return {
-      init,
-      hangup
-    }
-  }
-}
+  document.addEventListener('visibilitychange', () => {
+    hangup.value = document.hidden
+  })
+})
 </script>
+
 <style lang="less">
 .area {
   width: 100vw;
@@ -168,9 +71,6 @@ export default {
   height: 20px;
   background: rgba(124,184,235,20%);
   bottom: -160px;
-  &.stop {
-    animation: none;
-  }
 }
 
 .circles li:nth-child(1) {

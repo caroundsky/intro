@@ -49,4 +49,14 @@ code {
   border-radius: 6px;
   margin: 0 0.2em;
 }
+
+.nav-box {
+  text-align: right;
+}
+
+@media (max-width: 750px) {
+  html {
+    font-size: 15px;
+  }
+}
 </style>

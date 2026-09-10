@@ -75,7 +75,7 @@ const skillList = reactive([
 const projectList = reactive([
   {
     name: 'site-admin-plus：',
-    desc: 'Vue2 + Ts + ElementUi 开发的站点容器，采用 iframe 作为子页签展示方案',
+    desc: 'Vue3 + Vite 开发的站点容器， Iframe 作为子页签展示方案，组件化加载，插件式拓展',
     link: 'https://github.com/caroundsky/site-admin-plus'
   },
   {

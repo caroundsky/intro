@@ -3,7 +3,7 @@
     <a :href="homeUrl" class="back-link" aria-label="返回首页">← 返回</a>
   </div>
   <div class="exp-container">
-    <h1 class="page-title">关于我</h1>
+    <!-- <h1 class="page-title">关于我</h1> -->
 
     <section>
       <h2>💻 专业技能</h2>
@@ -67,7 +67,7 @@ type JobEntry =
 
 const skills = [
   '丰富的项目经验：门户网站、H5、商城项目（C 端）、OA 系统（B 端）均有开发经验',
-  '技术栈：ES6+、TS，精通 Vue 开发，熟悉 Angular',
+  '技术栈：ES6+TS，精通 Vue 开发，熟悉 Angular',
   '工程化：熟悉 vue-cli、vite 等构建工具，搭建过开发模板、组件库；CI/CD：Jenkins',
   '精通响应式布局，擅长 css3 动画交互，对性能优化、seo 有实践',
   '擅长使用 AI 工具，Cursor、Claude、Kimi code 均有实践',
